@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Talk Title - Nicholas Matsakis</title>
+  <meta charset="utf-8">
+  <link href="custom.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+  <script src="remark-latest.min.js">
+  </script>
+  <script src="absolution.js">
+  </script>
+  <script>
+    var slideshow = remark.create({
+      sourceUrl: 'index.md',
+      countIncrementalSlides: false,
+      highlightSpans: false,
+      slideNumberFormat: '%current%',
+      highlightLines: true,
+    });
+    slideshow.on('afterShowSlide', absolution);
+  </script>
+</body>
