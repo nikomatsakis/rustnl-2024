@@ -1,13 +1,14 @@
 use std::sync::Arc;
 
+use anyhow::anyhow;
 use formality_core::{cast_impl, Fallible, Map, Upcast};
 
 use crate::{
-    eg::{
+    eg_lang::{
         grammar::{Binder, UniversalVar, VarIndex, Variable},
         Term,
     },
-    grammar::{Id, Program, Ty},
+    grammar::{FnDefn, Id, Program, Ty},
 };
 
 #[derive(Clone, Debug, Ord, Eq, PartialEq, PartialOrd, Hash)]
@@ -69,5 +70,13 @@ impl Env {
         } else {
             anyhow::bail!("undefined variable `{var:?}`")
         }
+    }
+
+    pub fn fn_defn(&self, name: &Id) -> Fallible<&FnDefn> {
+        self.program
+            .fn_defns
+            .iter()
+            .find(|f| f.name == *name)
+            .ok_or_else(|| anyhow!("no function named `{name:?}`"))
     }
 }

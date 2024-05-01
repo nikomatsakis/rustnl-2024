@@ -1,4 +1,4 @@
-use crate::eg::grammar::{BoundVar, ExistentialVar, UniversalVar};
+use crate::eg_lang::grammar::{BoundVar, ExistentialVar, UniversalVar};
 
 use super::*;
 use formality_core::{cast_impl, Downcast, DowncastTo, Upcast, UpcastFrom};

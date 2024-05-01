@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use formality_core::{language::HasKind, term};
 
-use crate::eg::grammar::{Binder, Variable};
+use crate::eg_lang::grammar::{Binder, Variable};
 
 mod cast_impls;
 
@@ -39,7 +39,7 @@ pub enum Expr {
     #[grammar($v0)]
     Integer(usize),
 
-    #[grammar(($*v0))]
+    #[grammar($(v0))]
     Tuple(Vec<Expr>),
 
     #[grammar($v0 + $v1)]
@@ -60,6 +60,14 @@ pub enum Expr {
 
     #[grammar($v0)]
     Var(Id),
+
+    // HACK: we should extend formality_core parser
+    // so that it's possible to resolve the reduce-reduce
+    // conflict with `Var` variant -- but how!
+    //
+    // Can we thread down lookahead?
+    #[grammar(@ $v0 $<?v1> $(v2))]
+    Call(Id, Vec<Ty>, Vec<Expr>),
 }
 
 #[term]

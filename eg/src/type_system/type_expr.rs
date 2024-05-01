@@ -1,5 +1,5 @@
 use crate::{
-    grammar::{Expr, Ty},
+    grammar::{Expr, FnDefnBoundData, Ty},
     type_system::env::Env,
 };
 use formality_core::{judgment_fn, Cons};
@@ -75,6 +75,37 @@ judgment_fn! {
             (let ty = env.program_variable_ty(v)?)
             ------------------------------- ("var")
             (type_expr(env, Expr::Var(v)) => ty)
+        )
+
+        (
+            (let func = env.fn_defn(&func)?)
+            (let FnDefnBoundData { args, return_ty, body: _ } = func.binder.instantiate_with(&types)?)
+            (let arg_tys: Vec<_> = args.iter().map(|arg| &arg.ty).collect())
+            (type_exprs_as(env, &exprs, arg_tys) => ())
+            ------------------------------- ("call")
+            (type_expr(env, Expr::Call(func, types, exprs)) => &return_ty)
+        )
+    }
+}
+
+judgment_fn! {
+    fn type_exprs_as(
+        env: Env,
+        expr: Vec<Expr>,
+        ty: Vec<Ty>,
+    ) => () {
+        debug(expr, ty, env)
+
+        (
+            ------------------------------- ("nil")
+            (type_exprs_as(_env, (), ()) => ())
+        )
+
+        (
+            (type_expr_as(&env, expr, ty) => ())
+            (type_exprs_as(&env, &exprs, &tys) => ())
+            ------------------------------- ("nil")
+            (type_exprs_as(env, Cons(expr, exprs), Cons(ty, tys)) => ())
         )
     }
 }
