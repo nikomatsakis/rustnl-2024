@@ -2,10 +2,12 @@ use std::sync::Arc;
 
 use clap::Parser;
 use eg_lang::FormalityLang;
+use execute::Value;
 use fn_error_context::context;
 use formality_core::Fallible;
 use grammar::Program;
 
+mod execute;
 mod grammar;
 mod type_system;
 
@@ -37,24 +39,25 @@ pub fn main() -> Fallible<()> {
     let args = Args::try_parse()?;
 
     for path in &args.paths {
-        check_file(path)?;
+        let value = execute_file(path)?;
+        println!("{value:#?}");
     }
 
     Ok(())
 }
 
 #[context("check input file `{path:?}`")]
-fn check_file(path: &str) -> Fallible<()> {
+fn execute_file(path: &str) -> Fallible<Value> {
     let text: String = std::fs::read_to_string(path)?;
-    check_program(&text)
+    execute_program(&text)
 }
 
 #[context("check program")]
-fn check_program(text: &str) -> Fallible<()> {
+fn execute_program(text: &str) -> Fallible<Value> {
     // HACK: disable backtraces from anyhow.
     std::env::set_var("RUST_LIB_BACKTRACE", "0");
 
     let program: Arc<Program> = eg_lang::try_term(text)?;
     type_system::check_program(&program)?;
-    Ok(())
+    execute::execute(&program)
 }

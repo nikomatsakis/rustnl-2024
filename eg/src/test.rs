@@ -1,42 +1,42 @@
 use formality_core::test_util::ResultTestExt;
 
-use crate::check_program;
+use crate::execute_program;
 
 #[test]
 fn add_integers() {
-    check_program(
+    execute_program(
         "
         1 + 2
     ",
     )
-    .assert_ok(expect_test::expect!["()"])
+    .assert_ok(expect_test::expect!["Integer(3)"])
 }
 
 #[test]
 fn add_tuples() {
-    check_program(
+    execute_program(
         "
         (1, 2) + (3, 4)
     ",
     )
-    .assert_ok(expect_test::expect!["()"])
+    .assert_ok(expect_test::expect!["Tuple([Integer(4), Integer(6)])"])
 }
 
 #[test]
 fn variable() {
-    check_program(
+    execute_program(
         "
         let x = (1, 2);
         let y = (3, 4);
         x + y 
     ",
     )
-    .assert_ok(expect_test::expect!["()"])
+    .assert_ok(expect_test::expect!["Tuple([Integer(4), Integer(6)])"])
 }
 
 #[test]
 fn ill_typed() {
-    check_program(
+    execute_program(
         "
         (1, 2) + 2
     ",
@@ -58,7 +58,7 @@ fn ill_typed() {
 
 #[test]
 fn declare_function() {
-    check_program(
+    execute_program(
         "
         fn test(x: (u32, u32)) -> (u32, u32) {
             x
@@ -67,12 +67,12 @@ fn declare_function() {
         0
     ",
     )
-    .assert_ok(expect_test::expect![[r#"()"#]])
+    .assert_ok(expect_test::expect!["Integer(0)"])
 }
 
 #[test]
 fn call_function() {
-    check_program(
+    execute_program(
         "
         fn test(x: (u32, u32)) -> (u32, u32) {
             x
@@ -81,12 +81,12 @@ fn call_function() {
         @test((0, 0))
     ",
     )
-    .assert_ok(expect_test::expect![[r#"()"#]])
+    .assert_ok(expect_test::expect!["Tuple([Integer(0), Integer(0)])"])
 }
 
 #[test]
 fn call_generic_function() {
-    check_program(
+    execute_program(
         "
         fn identity<ty A>(x: A) -> A {
             x
@@ -95,12 +95,12 @@ fn call_generic_function() {
         @identity<(u32, u32)>((1, 2)) + (3, 4)
     ",
     )
-    .assert_ok(expect_test::expect![[r#"()"#]])
+    .assert_ok(expect_test::expect!["Tuple([Integer(4), Integer(6)])"])
 }
 
 #[test]
 fn ill_typed_call_generic_function() {
-    check_program(
+    execute_program(
         "
         fn identity<ty A>(x: A) -> A {
             x

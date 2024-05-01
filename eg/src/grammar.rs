@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use formality_core::{language::HasKind, term};
+use formality_core::{anyhow, language::HasKind, term, Fallible};
 
 use crate::eg_lang::grammar::{Binder, Variable};
 
@@ -10,6 +10,15 @@ mod cast_impls;
 pub struct Program {
     pub fn_defns: Vec<FnDefn>,
     pub expr: Expr,
+}
+
+impl Program {
+    pub fn fn_defn(&self, name: &Id) -> Fallible<&FnDefn> {
+        self.fn_defns
+            .iter()
+            .find(|f| f.name == *name)
+            .ok_or_else(|| anyhow!("no function named `{name:?}`"))
+    }
 }
 
 #[term(fn $name $binder)]

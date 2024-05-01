@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use anyhow::anyhow;
 use formality_core::{cast_impl, Fallible, Map, Upcast};
 
 use crate::{
@@ -73,10 +72,6 @@ impl Env {
     }
 
     pub fn fn_defn(&self, name: &Id) -> Fallible<&FnDefn> {
-        self.program
-            .fn_defns
-            .iter()
-            .find(|f| f.name == *name)
-            .ok_or_else(|| anyhow!("no function named `{name:?}`"))
+        self.program.fn_defn(name)
     }
 }
