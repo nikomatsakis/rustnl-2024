@@ -12,7 +12,7 @@ struct Frame {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Value {
-    Integer(usize),
+    Integer(u32),
     Tuple(Vec<Value>),
 }
 
@@ -83,7 +83,7 @@ impl Frame {
         &mut self,
         left: &Expr,
         right: &Expr,
-        primitive: impl Fn(usize, usize) -> usize,
+        primitive: impl Fn(u32, u32) -> u32,
     ) -> Fallible<Value> {
         let left = self.execute_expr(left)?;
         let right = self.execute_expr(right)?;
@@ -99,11 +99,7 @@ impl FromIterator<Value> for Value {
 }
 
 impl Value {
-    fn binary_op(
-        &self,
-        right: &Value,
-        primitive: &impl Fn(usize, usize) -> usize,
-    ) -> Fallible<Value> {
+    fn binary_op(&self, right: &Value, primitive: &impl Fn(u32, u32) -> u32) -> Fallible<Value> {
         match (self, right) {
             (Value::Integer(l), Value::Integer(r)) => Ok(Value::Integer(primitive(*l, *r))),
             (Value::Tuple(l), Value::Tuple(r)) => {

@@ -46,7 +46,7 @@ pub enum Expr {
     Let(Id, Arc<Expr>, Arc<Expr>),
 
     #[grammar($v0)]
-    Integer(usize),
+    Integer(u32),
 
     #[grammar($(v0))]
     Tuple(Vec<Expr>),
