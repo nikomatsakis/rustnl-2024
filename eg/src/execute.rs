@@ -10,10 +10,25 @@ struct Frame {
     variables: Map<Id, Value>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Value {
     Integer(u32),
     Tuple(Vec<Value>),
+}
+
+impl std::fmt::Debug for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Integer(arg0) => write!(f, "{arg0}"),
+            Self::Tuple(arg0) => {
+                let mut d = &mut f.debug_tuple("");
+                for elem in arg0 {
+                    d = d.field(elem);
+                }
+                d.finish()
+            }
+        }
+    }
 }
 
 pub fn execute(program: &Arc<Program>) -> Fallible<Value> {

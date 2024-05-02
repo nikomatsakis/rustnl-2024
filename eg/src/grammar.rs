@@ -81,7 +81,7 @@ pub enum Expr {
 
 #[term]
 pub enum Kind {
-    Ty,
+    Type,
 }
 
 impl Copy for Kind {}
@@ -95,14 +95,14 @@ pub enum Parameter {
 impl HasKind<crate::FormalityLang> for Parameter {
     fn kind(&self) -> formality_core::language::CoreKind<crate::FormalityLang> {
         match self {
-            Parameter::Ty(_) => Kind::Ty,
+            Parameter::Ty(_) => Kind::Type,
         }
     }
 }
 
 #[term]
 pub enum Ty {
-    #[variable(Kind::Ty)]
+    #[variable(Kind::Type)]
     Var(Variable),
 
     #[grammar($(v0))]

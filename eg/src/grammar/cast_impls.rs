@@ -6,7 +6,7 @@ use formality_core::{cast_impl, Downcast, DowncastTo, Upcast, UpcastFrom};
 impl UpcastFrom<Variable> for Parameter {
     fn upcast_from(term: Variable) -> Self {
         match term.kind() {
-            Kind::Ty => Ty::var(term).upcast(),
+            Kind::Type => Ty::var(term).upcast(),
         }
     }
 }

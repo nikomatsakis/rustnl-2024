@@ -23,6 +23,7 @@ formality_core::declare_language! {
         const BINDING_CLOSE = '>';
         const KEYWORDS = [
             "fn",
+            "type",
             "u32",
             "let",
         ];
