@@ -42,11 +42,11 @@ pub struct Arg {
 
 #[term]
 pub enum Expr {
-    #[grammar(let $v0 = $v1; $v2)]
-    Let(Id, Arc<Expr>, Arc<Expr>),
-
     #[grammar($v0)]
     Integer(u32),
+
+    #[grammar($v0)]
+    Var(Id),
 
     #[grammar($(v0))]
     Tuple(Vec<Expr>),
@@ -67,8 +67,8 @@ pub enum Expr {
     #[precedence(1)]
     Div(Arc<Expr>, Arc<Expr>),
 
-    #[grammar($v0)]
-    Var(Id),
+    #[grammar(let $v0 = $v1; $v2)]
+    Let(Id, Arc<Expr>, Arc<Expr>),
 
     // HACK: we should extend formality_core parser
     // so that it's possible to resolve the reduce-reduce

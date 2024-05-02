@@ -137,78 +137,116 @@ template: generics
 
 ---
 
-# Ever seen things like this?
+# How do we define a program?
 
-![Type rules](./images/typerules.png)
-
---
-
-.hugerr[🤔]
-
----
-
-# Rule of thumb
-
-Things look hard because...
-
---
-
-...they are so simple<sup>1</sup>...
-
-.footnote[
-    <sup>1</sup> To be clear, the ideas behind the notation are not always simple.
-    But the notation itself is often as big or bigger a barrier.
-]
-
---
-
-...but you don't know the jargon.
-
-
---
-
-...or in this case, the **notation**.
-
----
-
-# How many here know TCL?
-
---
-
-Me either.
-
-???
-
-Yeah, me either, though I've written a few programs in it once upon a time.
-
-But what I do know is that the main data structure for TCL is *strings*.
-
----
-
-
-
----
-
-# The "eg" programming language
-
+```rust
+Program = FnDefn* Expr
 ```
-fn foo(x: u32, y: u32) -> u32 {
-    let z: (u32, u32) = (x, y);
-    z.0 + z.1
+
+Using a **grammar**.
+
+---
+name: program-defn
+
+# In formality-core
+
+```rust
+// Program = FnDefn* Expr
+
+#[term($*fn_defns $expr)]
+pub struct Program {
+    pub fn_defns: Vec<FnDefn>,
+    pub expr: Expr,
 }
-
-foo(22)
 ```
 
 ---
+template: program-defn
 
-# Inference rules
+.line3[![Arrow](./images/Arrow.png)]
 
-![Type rules](./images/typerules.png)
+Term macro indicates a part of the program.
 
+Generates a lot of traits, including one for parsing.
 
+---
+template: program-defn
+
+.arrow.abspos.left90.top145.rotSE[![Arrow](./images/Arrow.png)]
+
+In the grammar, each `$` means "recursively parse to get value of this field"
+
+---
+template: program-defn
+
+.arrow.abspos.left100.top145.rotSE[![Arrow](./images/Arrow.png)]
+
+The `*` means "parse a vec out of zero or more instances"
+
+---
+template: program-defn
+
+.arrow.abspos.left200.top145.rotSE[![Arrow](./images/Arrow.png)]
+
+Here we parse the value of `expr`
 
 ---
 
-# Inference rules
+# Expression grammar
 
+```rust
+Expr = Integer
+     | Variable
+     | Expr + Expr         // and other binary operators
+     | ( Expr, ..., Expr )
+     | ...
+```
+
+---
+name: expr
+
+# In formality
+
+```rust
+#[term]
+pub enum Expr {
+    #[grammar($v0)]
+    Integer(u32),
+
+    #[grammar($v0)]
+    Var(Id),
+
+    #[grammar($(v0))]
+    Tuple(Vec<Expr>),
+
+    // ...
+}
+```
+
+---
+template: expr
+
+.arrow.abspos.left20.top95.rotSE[![Arrow](./images/Arrow.png)]
+
+Term on an enum indicates many options
+
+---
+template: expr
+
+.arrow.abspos.left45.top180[![Arrow](./images/Arrow.png)]
+
+Each variant has a grammar attached to it
+
+---
+template: expr
+
+.arrow.abspos.left220.top155.rotSW[![Arrow](./images/Arrow.png)]
+
+Anonymous fields are called `v0`, `v1`, etc
+
+---
+template: expr
+
+.arrow.abspos.left210.top315.rotSW[![Arrow](./images/Arrow.png)]
+
+`$(v0)` parses a comma separated list in parentheses
