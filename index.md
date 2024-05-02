@@ -165,30 +165,32 @@ template: program-defn
 
 .line3[![Arrow](./images/Arrow.png)]
 
-Term macro indicates a part of the program.
+The `#[term]` macro indicates a part of the program AST.
 
-Generates a lot of traits, including one for parsing.
+Generates a lot of boilerplate traits.
+
+Includes a grammar used for parsing and pretty-printing.
 
 ---
 template: program-defn
 
 .arrow.abspos.left90.top145.rotSE[![Arrow](./images/Arrow.png)]
 
-In the grammar, each `$` means "recursively parse to get value of this field"
+Each `$` parses value of a field
 
 ---
 template: program-defn
 
 .arrow.abspos.left100.top145.rotSE[![Arrow](./images/Arrow.png)]
 
-The `*` means "parse a vec out of zero or more instances"
+The `*` parses a "vec out of zero or more instances"
 
 ---
 template: program-defn
 
 .arrow.abspos.left200.top145.rotSE[![Arrow](./images/Arrow.png)]
 
-Here we parse the value of `expr`
+Here we parse a single `Expr` as the value of `expr`
 
 ---
 
