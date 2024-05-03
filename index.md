@@ -197,9 +197,8 @@ Here we parse a single `Expr` as the value of `expr`
 # Expression grammar
 
 ```rust
-Expr = Integer
-     | Variable
-     | Expr + Expr         // and other binary operators
+Expr = Integer             // e.g., 22
+     | Id                  // e.g., `x`
      | ( Expr, ..., Expr )
      | ...
 ```
@@ -223,6 +222,8 @@ pub enum Expr {
 
     // ...
 }
+
+formality_core::id!(Id);
 ```
 
 ---
@@ -249,6 +250,224 @@ Anonymous fields are called `v0`, `v1`, etc
 ---
 template: expr
 
+.arrow.abspos.left45.top290[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left10.top500[![Arrow](./images/Arrow.png)]
+
+`formality_core::id!()` declares an "identifier" -- a string, basically
+
+---
+template: expr
+
 .arrow.abspos.left210.top315.rotSW[![Arrow](./images/Arrow.png)]
 
 `$(v0)` parses a comma separated list in parentheses
+
+---
+
+# Expression grammar, cont'd
+
+```rust
+Expr = ...
+     | Expr + Expr
+     | Expr - Expr
+     | Expr * Expr
+     | Expr / Expr
+     | ...
+```
+
+---
+name: exprop
+
+# In formality
+
+```rust
+#[term]
+pub enum Expr {
+    // ...
+
+    #[grammar($v0 + $v1)]
+    #[precedence(0)]
+    Add(Arc<Expr>, Arc<Expr>),
+
+    // ...
+
+    #[grammar($v0 * $v1)]
+    #[precedence(1)]
+    Mul(Arc<Expr>, Arc<Expr>),
+
+    // ...
+}
+```
+
+---
+template: exprop
+
+.arrow.abspos.left45.top262[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left40.top422[![Arrow](./images/Arrow.png)]
+
+precedence annotations help avoid parsing ambiguity
+
+---
+template: exprop
+
+.arrow.abspos.left100.top322.rotNE[![Arrow](./images/Arrow.png)]
+
+recursive types typically use `Arc`
+
+---
+name: exprlet
+
+# Expression grammar, cont'd
+
+```rust
+Expr = ...
+     | let Id = Expr; Expr  // e.g., let x = 22 + 44; x * 3
+     | ...
+```
+
+---
+template: exprlet
+
+.arrow.abspos.left130.top180.rotNE[![Arrow](./images/Arrow.png)]
+
+Declare a local variable (e.g., `x`)...
+
+---
+template: exprlet
+
+.arrow.abspos.left180.top180.rotNE[![Arrow](./images/Arrow.png)]
+
+...with this initial value (e.g., `22+44`)...
+
+---
+template: exprlet
+
+.arrow.abspos.left240.top180.rotNE[![Arrow](./images/Arrow.png)]
+
+...and then executes this expression, with the variable in scope.
+
+---
+template: exprlet
+
+In formality:
+
+```rust
+#[term]
+pub enum Expr {
+    // ...
+
+    #[grammar(let $v0 = $v1; $v2)]
+    Let(Id, Arc<Expr>, Arc<Expr>),
+
+    // ...
+}
+```
+
+---
+
+# Example 0
+
+```rust
+let x = 22;
+let y = 44;
+x + y * 3 + 66
+```
+
+???
+
+At this point we've seen enough grammar to express some non-trivial expressions.
+
+We've also done enough work in formality to start testing our parser.
+
+But before we can do that, I hvae to show you one bit of boilerplate.
+
+---
+name: eglang
+
+# Declaring the language
+
+```rust
+formality_core::declare_language! {
+    mod eg_lang {
+        const NAME = "Eg";
+        // ... 4 lines I'm not showing you yet ...
+        const KEYWORDS = [
+            "fn",
+            "type",
+            "u32",
+            "let",
+        ];
+    }
+}
+
+use eg_lang::FormalityLang;
+```
+
+---
+template: eglang
+
+.arrow.abspos.left100.top180.rotNE[![Arrow](./images/Arrow.png)]
+
+Declare the language module
+
+---
+template: eglang
+
+.arrow.abspos.left95.top265.rotNE[![Arrow](./images/Arrow.png)]
+
+Identifiers declared with `Id` will automatically not accept keywords.
+
+---
+template: eglang
+
+.arrow.abspos.left10.top500[![Arrow](./images/Arrow.png)]
+
+Macros like `#[term]` reference `crate::FormalityLang`
+
+---
+
+# Let's write some tests
+
+```rust
+#[test]
+fn parse_expr_let() {
+    let e: Expr = eg_lang::term(
+        "
+            let x = 22;
+            let y = 44;
+            x + y * 3 + 66
+        ",
+    );
+
+    // ...
+}
+```
+
+---
+
+# Type-checking
+
+```rust
+22 + 44             // ✅
+```
+
+--
+
+```rust
+(22, 44) + (66, 88) // ✅
+```
+
+--
+
+```rust
+(22, 44) + 66       // ❌
+```
+
+---
+
+# Inference rules
+
+![Inference rules](./images/typerules.png)
+
+
+

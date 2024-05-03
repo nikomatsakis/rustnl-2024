@@ -1,8 +1,57 @@
 use formality_core::test_util::ResultTestExt;
 
-use crate::execute_program;
+use crate::{eg_lang, execute_program, grammar::Expr};
 
 mod talk_examples;
+
+#[test]
+fn parse_expr_let() {
+    let e: Expr = eg_lang::term(
+        "
+            let x = 22;
+            let y = 44;
+            x + y * 3 + 66
+        ",
+    );
+
+    // Default `Debug` impl uses grammar...
+    assert_eq!(format!("{e:?}"), "let x = 22 ; let y = 44 ; x + y * 3 + 66");
+
+    // But `:#?` gives more detail
+    expect_test::expect![[r#"
+        Let(
+            x,
+            Integer(
+                22,
+            ),
+            Let(
+                y,
+                Integer(
+                    44,
+                ),
+                Add(
+                    Add(
+                        Var(
+                            x,
+                        ),
+                        Mul(
+                            Var(
+                                y,
+                            ),
+                            Integer(
+                                3,
+                            ),
+                        ),
+                    ),
+                    Integer(
+                        66,
+                    ),
+                ),
+            ),
+        )
+    "#]]
+    .assert_debug_eq(&e);
+}
 
 #[test]
 fn add_integers() {
