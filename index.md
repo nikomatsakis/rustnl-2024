@@ -62,11 +62,11 @@ x + y
 
 prints....
 
+--
+
 ```
 66
 ```
-
---
 
 .p40[![jawdrop](./images/jawdrop.gif)]
 
@@ -577,6 +577,16 @@ template: gamma-x-t
 
 &Gamma; is often used for a typing *environment*
 
+---
+
+# Typing environments
+
+Grammar
+
+```rust
+Γ = (x : T)*
+```
+
 --
 
 In formality:
@@ -585,26 +595,175 @@ In formality:
 #[derive(Clone, Debug, Ord, Eq, PartialEq, PartialOrd, Hash)]
 pub struct Env {
     program: Arc<Program>,
-    type_variables: Vec<Variable>,
     program_variables: Map<Id, Ty>,
 }
 ```
 
+--
+
+.arrow.abspos.left290.top430.rotNE[![Arrow](./images/Arrow.png)]
+
+--
+
+`Γ(x) = T` becomes `env.program_variables[&x]`
+
 ---
-template: inf-rule-var
+template: gamma-x-t
 
-.arrow.abspos.left70.top210.rotNE[![Arrow](./images/Arrow.png)]
-.arrow.abspos.left130.top210.rotNE[![Arrow](./images/Arrow.png)]
+The other stuff? 
 
-Most of this other stuff? Arbitrary.
+--
+
+.arrow.abspos.left50.top170.rotNE[![Arrow](./images/Arrow.png)]
+
+--
+
+.arrow.abspos.left130.top170.rotNE[![Arrow](./images/Arrow.png)]
+
+--
+
+Arbitrary text. Effectively the 'name' of this predicate is `⊢:`
+
+--
+
+Think of Objective C method names like `insertObject:atIndex:`
+
+```objc
+[map insertObject:some_object atIndex:at_index]
+```
+
+.arrow.abspos.left70.top410.rotNE[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left320.top410.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+template: gamma-x-t
 
 Typical convention:
-* `A ⊢ B` means "given the assumptions A, we conclude B"
-    * "A 'lets us say' B"
-* `:` means "has type"
+
+--
+
+* `A ⊢` means "given assumptions `A`..."<sup>1</sup>
+* `: T` means "has type `T`", `T` is kind of the "result"
+
+.footnote[
+    <sup>1</sup> True story: When I realized I could read `A ⊢ B` as "A *lets us say* B",
+    it totally upped my game in terms of my ability to read type system papers.
+]
+
+--
+
+So `Γ ⊢ e : T` could be read as...
+
+* Assuming `Γ`, `e` has the type `T`
 
 ---
-# In a-mir-formality
+template: gamma-x-t
+
+More programm-y...
+
+* `fn type_expr(env: Env, expr: Expr) -> Ty`
+
+---
+# In formality
+
+```rust
+judgment_fn! {
+    pub fn type_expr(
+        env: Env,
+        expr: Expr,
+    ) => Ty {
+        ...
+    }
+)
+```
+
+
+---
+name: in-formality0
+
+# In formality
+
+```rust
+judgment_fn! {
+    pub fn type_expr(
+        env: Env,
+        expr: Expr,
+    ) => Ty {
+        //...
+        (
+            (let ty = env.program_variable_ty(x)?)
+            ------------------------------- ("var")
+            (type_expr(env, Expr::Var(x)) => ty)
+        )
+        //...
+    }
+)
+```
+
+---
+template: in-formality0
+name: in-formality1
+
+.abspos.left400.top150.width200[![Inference rule](./images/inf-rule-var.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left250.top420.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left300.top420.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left400.top420.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left240.top300.rotSE[![Arrow](./images/Arrow.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left500.top300.rotSE[![Arrow](./images/Arrow.png)]
+
+--
+
+.abspos.left200.top450.inset[
+```rust
+impl Env {
+    pub fn program_variable_ty(&self, var: Id) -> Fallible<&Ty> {
+        ...
+    }
+}
+```
+]
+
+--
+
+.arrow.abspos.left675.top470.rotSE[![Arrow](./images/Arrow.png)]
+
+--
+
+.abspos.left400.top560.inset[
+```rust
+type Fallible<T> = anyhow::Result<T>;
+```
+]
+
+---
+template: in-formality1
+
+.arrow.abspos.left190.top300.rotSE[![Arrow](./images/Arrow.png)]
+
+---
+template: in-formality1
+
+.arrow.abspos.left470.top420.rotNE[![Arrow](./images/Arrow.png)]
 
 ---
 

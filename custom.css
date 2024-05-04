@@ -732,3 +732,9 @@ blockquote p {
   height: 25px;
   width: 25px;
 }
+
+.inset {
+  border-color: black;
+  border-radius: 3px;
+  border-style: solid;
+}
