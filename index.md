@@ -29,12 +29,12 @@ The idea is to give us a more formal definition of the Rust type system, one we 
 
 or, more precisely, `formality-core`<sup>1</sup>
 
-.footnote {
+.footnote[
     <sup>1</sup> Credit: formality-core is heavily inspired
     by [PLT Redex](https://redex.racket-lang.org/),
     a similar system implemented in the
     Racket programming language.
-}
+]
 
 ???
 
