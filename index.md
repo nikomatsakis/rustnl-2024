@@ -766,27 +766,108 @@ template: in-formality1
 .arrow.abspos.left470.top420.rotNE[![Arrow](./images/Arrow.png)]
 
 ---
+name: letrule 
 
-# Typing rules for eg
+# Typing lets
 
 ```rust
-#[term]
-pub enum Expr {
-    #[grammar($v0)]
-    Integer(u32),
-    // ...
-}
+judgment_fn! {
+    pub fn type_expr(
+        env: Env,
+        expr: Expr,
+    ) => Ty {
+        //...
+        (
+            (type_expr(&env, &*initializer) => var_ty)
+            (let env = env.with_program_variable(&var, var_ty))
+            (type_expr(&env, &*body) => body_ty)
+            ------------------------------- ("let")
+            (type_expr(env, Expr::Let(var, initializer, body)) => body_ty)
+        )
+        //...
+    }
+)
 ```
-
-.arrow.abspos.left10.top60[![Arrow](./images/Arrow.png)]
 
 ---
+template: letrule
 
+.arrow.abspos.left160.top480.rotNE[![Arrow](./images/Arrow.png)]
 
-# Typing rules for eg
+---
+template: letrule
 
+.arrow.abspos.left120.top330[![Arrow](./images/Arrow.png)]
+
+---
+template: letrule
+
+.arrow.abspos.left120.top360[![Arrow](./images/Arrow.png)]
+
+--
+
+.arrow.abspos.left255.top420.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+template: letrule
+
+.arrow.abspos.left120.top390[![Arrow](./images/Arrow.png)]
+
+---
+template: letrule
+
+.arrow.abspos.left680.top480.rotNE[![Arrow](./images/Arrow.png)]
+
+---
+name: binaryop
+
+# Typing binary operators
+
+```rust
+judgment_fn! {
+    pub fn type_expr(
+        env: Env,
+        expr: Expr,
+    ) => Ty {
+        //...
+        (
+            (type_expr(&env, &*l) => l_ty)
+            (type_expr(&env, &*r) => r_ty)
+            (if l_ty == r_ty)
+            ------------------------------- ("add")
+            (type_expr(env, Expr::Add(l, r)) => l_ty)
+        )
+        //...
+    }
+)
 ```
 
-------------------
-Γ ⊢ N : u32
-```
+---
+template: binaryop
+
+.arrow.abspos.left120.top330[![Arrow](./images/Arrow.png)]
+
+---
+template: binaryop
+
+.arrow.abspos.left120.top360[![Arrow](./images/Arrow.png)]
+
+---
+template: binaryop
+
+.arrow.abspos.left120.top390[![Arrow](./images/Arrow.png)]
+
+---
+template: binaryop
+
+.abspos.left400.top150.width200[![Inference rule](./images/inf-rule-add.png)]
+
+--
+
+.arrow.abspos.left700.top230.rotNW[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left500.top110.rotSE[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left700.top110.rotSE[![Arrow](./images/Arrow.png)]
+
+---
+# Writing tests
+

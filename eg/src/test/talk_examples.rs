@@ -54,3 +54,25 @@ fn example4() {
     )
     .assert_ok(expect!["(66, (4, 6))"])
 }
+
+#[test]
+fn example5() {
+    execute_program(
+        "
+        3 + (4, 5)
+    ",
+    )
+    .assert_err(expect![[r#"
+        check program
+
+        Caused by:
+            judgment `type_expr { expr: 3 + (4, 5), env: Env { program: 3 + (4, 5), program_variables: {} } }` failed at the following rule(s):
+              the rule "add" failed at step #0 (src/file.rs:LL:CC) because
+                judgment `type_binary_expr { l: 3, r: (4, 5), env: Env { program: 3 + (4, 5), program_variables: {} } }` failed at the following rule(s):
+                  the rule "type_binary_expr" failed at step #1 (src/file.rs:LL:CC) because
+                    judgment `type_expr_as { expr: (4, 5), ty: u32, env: Env { program: 3 + (4, 5), program_variables: {} } }` failed at the following rule(s):
+                      the rule "type_expr_as" failed at step #1 (src/file.rs:LL:CC) because
+                        condition evaluted to false: `ty == ty_expected`
+                          ty = (u32, u32)
+                          ty_expected = u32"#]])
+}

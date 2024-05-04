@@ -33,11 +33,18 @@ formality_core::declare_language! {
 #[derive(Parser, Debug)] // requires `derive` feature
 #[command(author, version, about, long_about = None)]
 struct Args {
+    #[clap(short, long)]
+    execute: Option<String>,
     paths: Vec<String>,
 }
 
 pub fn main() -> Fallible<()> {
     let args = Args::try_parse()?;
+
+    if let Some(execute) = &args.execute {
+        let value = execute_program(execute)?;
+        println!("{value:#?}");
+    }
 
     for path in &args.paths {
         let value = execute_file(path)?;
