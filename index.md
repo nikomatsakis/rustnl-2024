@@ -27,7 +27,14 @@ The idea is to give us a more formal definition of the Rust type system, one we 
 
 --
 
-or, more precisely, `formality-core`
+or, more precisely, `formality-core`<sup>1</sup>
+
+.footnote {
+    <sup>1</sup> Credit: formality-core is heavily inspired
+    by [PLT Redex](https://redex.racket-lang.org/),
+    a similar system implemented in the
+    Racket programming language.
+}
 
 ???
 
@@ -869,5 +876,23 @@ template: binaryop
 .arrow.abspos.left700.top110.rotSE[![Arrow](./images/Arrow.png)]
 
 ---
-# Writing tests
+# Demo time!
 
+---
+# Conclusion
+
+formality-core: making type systems playful
+
+--
+
+still a WIP
+
+--
+
+check out the full demo on your own time!
+
+```bash
+git clone git@github.com:nikomatsakis/rustnl-2024
+cd rustnl-2024/eg
+cargo test --all --all-targets
+```
