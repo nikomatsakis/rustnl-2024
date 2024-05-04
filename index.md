@@ -891,6 +891,10 @@ still a WIP
 
 check out the full demo on your own time!
 
+--
+
+and of course I mean check out quite literally:
+
 ```bash
 git clone git@github.com:nikomatsakis/rustnl-2024
 cd rustnl-2024/eg
