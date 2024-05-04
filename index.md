@@ -444,7 +444,6 @@ fn parse_expr_let() {
 ```
 
 ---
-
 # Type-checking
 
 ```rust
@@ -464,10 +463,171 @@ fn parse_expr_let() {
 ```
 
 ---
+name: egtypes
+
+# Types in eg
+
+```rust
+T = u32
+  | ( T, ..., T )
+  | ...
+```
+
+--
+
+in formality:
+
+```rust
+#[term]
+pub enum Ty {
+    #[grammar(u32)]
+    U32,
+
+    #[grammar($(v0))]
+    Tuple(Vec<Ty>),
+
+    // ...
+}
+```
+
+---
+name: infrules
 
 # Inference rules
 
 ![Inference rules](./images/typerules.png)
 
+--
+
+.p40[![Confused](./images/confused.gif)]
+
+---
+
+# Inference rules
+
+.arrow.abspos.left10.top70.rotNE[![Arrow](./images/Arrow.png)]
+
+--
+
+!["So I infer"](./images/so-i-infer.gif)
+
+.arrow.abspos.left230.top400.rotSE[![Arrow](./images/Arrow.png)]
+
+---
+
+# Inference rules
+
+```rust
+    X               Y
+    -------------------------------- R
+    Z
+```
+
+Read as: "If X and Y, then Z"
+
+R is just the name of the rule
+
+Sometimes there are no conditions.
+
+---
+name: inf-rule-var
+
+# Inference rule for variables
+
+.p40[![Inference rule](./images/inf-rule-var.png)]
+
+.footnote[
+    Rendered with https://www.quicklatex.com/
+]
 
 
+---
+name: gamma-x-t
+
+# What is this?
+
+.p20[![Gamma](./images/gamma-x-t.png)]
+
+--
+
+A *predicate* -- a single thing we can say is true or false
+
+---
+template: gamma-x-t
+
+.arrow.abspos.left160.top170.rotNE[![Arrow](./images/Arrow.png)]
+
+--
+
+*Variables*<sup>1</sup> referencing the grammar.
+
+.footnote[
+    <sup>1</sup> More properly, *metavariables*, to distinguish them from the variables
+    in the program being typechecked
+]
+
+--
+
+T means "some type", like `u32`.
+
+---
+template: gamma-x-t
+
+.arrow.abspos.left15.top170.rotNE[![Arrow](./images/Arrow.png)]
+
+&Gamma; is often used for a typing *environment*
+
+--
+
+In formality:
+
+```rust
+#[derive(Clone, Debug, Ord, Eq, PartialEq, PartialOrd, Hash)]
+pub struct Env {
+    program: Arc<Program>,
+    type_variables: Vec<Variable>,
+    program_variables: Map<Id, Ty>,
+}
+```
+
+---
+template: inf-rule-var
+
+.arrow.abspos.left70.top210.rotNE[![Arrow](./images/Arrow.png)]
+.arrow.abspos.left130.top210.rotNE[![Arrow](./images/Arrow.png)]
+
+Most of this other stuff? Arbitrary.
+
+Typical convention:
+* `A ⊢ B` means "given the assumptions A, we conclude B"
+    * "A 'lets us say' B"
+* `:` means "has type"
+
+---
+# In a-mir-formality
+
+---
+
+# Typing rules for eg
+
+```rust
+#[term]
+pub enum Expr {
+    #[grammar($v0)]
+    Integer(u32),
+    // ...
+}
+```
+
+.arrow.abspos.left10.top60[![Arrow](./images/Arrow.png)]
+
+---
+
+
+# Typing rules for eg
+
+```
+
+------------------
+Γ ⊢ N : u32
+```

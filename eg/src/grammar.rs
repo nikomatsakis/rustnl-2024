@@ -102,14 +102,14 @@ impl HasKind<crate::FormalityLang> for Parameter {
 
 #[term]
 pub enum Ty {
-    #[variable(Kind::Type)]
-    Var(Variable),
+    #[grammar(u32)]
+    U32,
 
     #[grammar($(v0))]
     Tuple(Vec<Ty>),
 
-    #[grammar(u32)]
-    U32,
+    #[variable(Kind::Type)]
+    Var(Variable),
 }
 
 formality_core::id!(Id);

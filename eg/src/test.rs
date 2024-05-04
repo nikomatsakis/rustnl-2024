@@ -96,11 +96,11 @@ fn ill_typed() {
         check program
 
         Caused by:
-            judgment `type_expr { expr: (1, 2) + 2, env: Env { program: (1, 2) + 2, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+            judgment `type_expr { expr: (1, 2) + 2, env: Env { program: (1, 2) + 2, program_variables: {} } }` failed at the following rule(s):
               the rule "add" failed at step #0 (src/file.rs:LL:CC) because
-                judgment `type_binary_expr { l: (1, 2), r: 2, env: Env { program: (1, 2) + 2, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+                judgment `type_binary_expr { l: (1, 2), r: 2, env: Env { program: (1, 2) + 2, program_variables: {} } }` failed at the following rule(s):
                   the rule "type_binary_expr" failed at step #1 (src/file.rs:LL:CC) because
-                    judgment `type_expr_as { expr: 2, ty: (u32, u32), env: Env { program: (1, 2) + 2, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+                    judgment `type_expr_as { expr: 2, ty: (u32, u32), env: Env { program: (1, 2) + 2, program_variables: {} } }` failed at the following rule(s):
                       the rule "type_expr_as" failed at step #1 (src/file.rs:LL:CC) because
                         condition evaluted to false: `ty == ty_expected`
                           ty = u32
@@ -164,11 +164,11 @@ fn ill_typed_call_generic_function() {
         check program
 
         Caused by:
-            judgment `type_expr { expr: @ identity <(u32, u32)> ((1, 2)) + 4, env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+            judgment `type_expr { expr: @ identity <(u32, u32)> ((1, 2)) + 4, env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, program_variables: {} } }` failed at the following rule(s):
               the rule "add" failed at step #0 (src/file.rs:LL:CC) because
-                judgment `type_binary_expr { l: @ identity <(u32, u32)> ((1, 2)), r: 4, env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+                judgment `type_binary_expr { l: @ identity <(u32, u32)> ((1, 2)), r: 4, env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, program_variables: {} } }` failed at the following rule(s):
                   the rule "type_binary_expr" failed at step #1 (src/file.rs:LL:CC) because
-                    judgment `type_expr_as { expr: 4, ty: (u32, u32), env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, type_variables: [], program_variables: {} } }` failed at the following rule(s):
+                    judgment `type_expr_as { expr: 4, ty: (u32, u32), env: Env { program: fn identity <type> (x : ^type0_0) -> ^type0_0 { x } @ identity <(u32, u32)> ((1, 2)) + 4, program_variables: {} } }` failed at the following rule(s):
                       the rule "type_expr_as" failed at step #1 (src/file.rs:LL:CC) because
                         condition evaluted to false: `ty == ty_expected`
                           ty = u32

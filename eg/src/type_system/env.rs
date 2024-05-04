@@ -4,7 +4,7 @@ use formality_core::{cast_impl, Fallible, Map, Upcast};
 
 use crate::{
     eg_lang::{
-        grammar::{Binder, UniversalVar, VarIndex, Variable},
+        grammar::{Binder, UniversalVar, VarIndex},
         Term,
     },
     grammar::{FnDefn, Id, Program, Ty},
@@ -13,7 +13,6 @@ use crate::{
 #[derive(Clone, Debug, Ord, Eq, PartialEq, PartialOrd, Hash)]
 pub struct Env {
     program: Arc<Program>,
-    type_variables: Vec<Variable>,
     program_variables: Map<Id, Ty>,
 }
 
@@ -24,7 +23,6 @@ impl Env {
     pub fn new(program: &Arc<Program>) -> Self {
         Self {
             program: program.clone(),
-            type_variables: vec![],
             program_variables: Map::default(),
         }
     }
@@ -33,7 +31,7 @@ impl Env {
     /// for each of the bound variables in `binder`;
     /// return the environment and the contents of binder.
     pub fn open<T: Term>(program: &Arc<Program>, binder: &Binder<T>) -> (Self, T) {
-        let type_variables: Vec<_> = binder
+        let type_variables: Vec<UniversalVar> = binder
             .kinds()
             .iter()
             .zip(0..)
@@ -50,7 +48,6 @@ impl Env {
 
         let env = Self {
             program: program.clone(),
-            type_variables,
             program_variables: Map::default(),
         };
 
